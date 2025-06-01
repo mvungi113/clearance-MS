@@ -1,6 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
 <div class="container mt-4">
     <h3>Manage Users</h3>
     <form method="GET" action="{{ route('admin.manage.users') }}" class="mb-3">

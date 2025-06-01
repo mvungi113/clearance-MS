@@ -71,4 +71,5 @@
         </form>
     </div>
 </div>
+<p>Name: {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</p>
 @endsection

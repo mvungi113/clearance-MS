@@ -1,6 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
 <div class="card shadow-sm">
     <div class="card-header bg-white">
         <h5 class="mb-0">Register User</h5>

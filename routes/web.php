@@ -85,11 +85,14 @@ Route::delete('/admin/users/{id}', [AdminController::class, 'delete'])->name('ad
 Route::put('/admin/users/{id}', [AdminController::class, 'update'])->name('admin.users.update');
 
 // Department dashboards
-Route::get('/department', [DepartmentDashboardController::class, 'index'])->name('department.dashboard');
+Route::get('/department/dashboard', [DepartmentDashboardController::class, 'index'])->name('department.dashboard');
 Route::post('/department/{id}/approve', [DepartmentDashboardController::class, 'approve'])->name('department.approve');
 Route::post('/department/{id}/reject', [DepartmentDashboardController::class, 'reject'])->name('department.reject');
 Route::post('/department/{id}/verify', [DepartmentDashboardController::class, 'verifyDepartment'])->name('department.verify');
 Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
+Route::get('/department/verified-requests', [DepartmentController::class, 'verifiedRequests'])->name('departments.verified_requests');
+Route::get('/department/unverified-requests', [DepartmentController::class, 'unverifiedRequests'])->name('departments.unverified_requests');
+Route::get('/department/profile', [DepartmentController::class, 'profile'])->name('departments.profile');
 
 // Library department
 Route::get('/department/library', [LibraryClearanceController::class, 'dashboard'])->name('library.dashboard');
@@ -139,3 +142,6 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
     Route::get('/admin/profile', function () {
         return view('admin.profile');
     })->name('admin.profile');
+
+Route::redirect('/department', '/department/dashboard');
+Route::post('/department/profile/password', [DepartmentController::class, 'updatePassword'])->name('department.profile.password');

@@ -70,23 +70,23 @@
             <!-- Navigation Links -->
             <ul class="nav flex-column w-100">
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{{ route('department.dashboard') }}">
+                    <a class="nav-link text-white {{ request()->routeIs('department.dashboard') ? 'active' : '' }}" href="{{ route('department.dashboard') }}">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{{ route('departments.index') }}">
-                        <i class="bi bi-list-ul me-2"></i> Departments List
+                    <a class="nav-link text-white {{ request()->routeIs('departments.verified_requests') ? 'active' : '' }}" href="{{ route('departments.verified_requests') }}">
+                        <i class="bi bi-check2-circle me-2"></i> Verified Requests
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="#">
-                        <i class="bi bi-people me-2"></i> Staff
+                    <a class="nav-link text-white {{ request()->routeIs('departments.unverified_requests') ? 'active' : '' }}" href="{{ route('departments.unverified_requests') }}">
+                        <i class="bi bi-x-circle me-2"></i> Unverified Requests
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="#">
-                        <i class="bi bi-journal-check me-2"></i> Approvals
+                    <a class="nav-link text-white {{ request()->routeIs('departments.profile') ? 'active' : '' }}" href="{{ route('departments.profile') }}">
+                        <i class="bi bi-person-circle me-2"></i> Profile
                     </a>
                 </li>
             </ul>

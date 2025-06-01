@@ -1,32 +1,77 @@
-{{-- filepath: resources/views/departments/verified_requests.blade.php --}}
+{{-- filepath: resources/views/departments/dashboard.blade.php --}}
 @extends('layout.department')
 
 @section('content')
-    <h4>Verified Requests</h4>
-    @if($clearances->isEmpty())
-        <div class="alert alert-info">No verified requests found for your department.</div>
-    @else
+@php
+    $role = strtolower(auth()->user()->role);
+@endphp
+
+@if(auth()->user())
+    <div class="container mt-4">
+        <h3 class="mb-4 text-capitalize">{{ $role }} Clearance Requests</h3>
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Student Name</th>
-                    <th>Student Email</th>
-                    <th>Department</th>
-                    <th>Status</th>
-                    <th>Date Verified</th>
+                    @if($role === 'library')
+                        <th>Library Status</th>
+                    @elseif($role === 'hostel')
+                        <th>Hostel Status</th>
+                    @elseif($role === 'sports')
+                        <th>Sports Status</th>
+                    @elseif($role === 'computer_lab')
+                        <th>Computer Lab Status</th>
+                    @elseif($role === 'estate')
+                        <th>Estate Status</th>
+                    @elseif($role === 'finance')
+                        <th>Financial Status</th>
+                    @elseif($role === 'hod')
+                        <th>HoD Status</th>
+                    @endif
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($clearances as $clearance)
-                    <tr>
-                        <td>{{ $clearance->student ? $clearance->student->first_name . ' ' . $clearance->student->last_name : 'N/A' }}</td>
-                        <td>{{ $clearance->student ? $clearance->student->email : 'N/A' }}</td>
-                        <td>{{ ucfirst($clearance->department) }}</td>
-                        <td>{{ ucfirst($clearance->status) }}</td>
-                        <td>{{ $clearance->updated_at->format('Y-m-d') }}</td>
-                    </tr>
+                @php $i = 1; @endphp
+                @foreach($requests as $request)
+                    @php
+                        $status = match($role) {
+                            'library' => $request->library_status,
+                            'hostel' => $request->hostel_status,
+                            'sports' => $request->sports_status,
+                            'computer_lab' => $request->computer_lab_status,
+                            'estate' => $request->estate_status,
+                            'finance' => $request->financial_status,
+                            'hod' => $request->hod_status,
+                            default => null
+                        };
+                    @endphp
+                    @if($status === 'verified')
+                        <tr>
+                            <td>{{ $i++ }}</td>
+                            <td>{{ $request->student_name }}</td>
+                            <td>
+                                <span class="badge bg-success">Verified</span>
+                            </td>
+                            <td>
+                                <span class="text-muted">No action</span>
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
+                @if($i === 1)
+                    <tr>
+                        <td colspan="4">No verified clearance requests found.</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
-    @endif
+    </div>
+@else
+    {{ abort(404) }}
+@endif
 @endsection

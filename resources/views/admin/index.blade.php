@@ -1,6 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
     <h2 class="mb-3">Welcome, {{ auth()->user()->first_name ?? 'Admin' }}!</h2>
     <p class="mb-4">This is your admin dashboard. Use the shortcuts below to manage the system.</p>
 

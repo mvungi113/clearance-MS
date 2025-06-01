@@ -1,7 +1,11 @@
 @extends('layout.student')
 
 @section('content')
-@if(auth()->user() && auth()->user()->role === 'student')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'student') {
+        abort(404);
+    }
+@endphp
 <div class="card shadow-sm">
     <div class="card-header bg-white">
         <h5 class="mb-0"><i class="bi bi-clipboard-check text-success me-2"></i>My Clearance Status</h5>
@@ -112,7 +116,5 @@
         new bootstrap.Tooltip(tooltipTriggerEl)
     })
 </script>
-@else
-    {{ abort(404) }}
-@endif
+
 @endsection

@@ -1,6 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
 <style>
     /* Remove input border glow on focus */
     .form-control:focus, .form-select:focus {

@@ -1,7 +1,11 @@
 @extends('layout.student')
 
 @section('content')
-@if(auth()->user() && auth()->user()->role === 'student')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'student') {
+        abort(404);
+    }
+@endphp
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm">
@@ -22,6 +26,10 @@
                 <form method="POST" action="{{ route('student.clearance.request') }}">
                     @csrf
                     <div class="mb-3">
+                        <label for="reason" class="form-label">Clearance Reason <span class="text-danger">*</span></label>
+                        <textarea name="reason" id="reason" class="form-control" rows="3" required placeholder="Enter the reason for clearance">{{ old('reason') }}</textarea>
+                    </div>
+                    <div class="mb-3">
                         <label for="details" class="form-label">Details <span class="text-muted">(optional)</span></label>
                         <textarea name="details" id="details" class="form-control" rows="4" placeholder="Provide any relevant details for your clearance request..."></textarea>
                     </div>
@@ -33,7 +41,5 @@
         </div>
     </div>
 </div>
-@else
-    {{ abort(404) }}
-@endif
+
 @endsection
