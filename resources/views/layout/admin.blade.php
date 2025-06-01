@@ -92,6 +92,11 @@
                         <i class="bi bi-journal-plus"></i> Register Course/Department
                     </a>
                 </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link {{ request()->routeIs('admin.profile') ? 'active' : '' }}" href="{{ route('admin.profile') }}">
+                        <i class="bi bi-person-circle"></i> Profile
+                    </a>
+                </li>
                 <!-- Add more admin links as needed -->
             </ul>
             <!-- Logout link at the bottom -->
