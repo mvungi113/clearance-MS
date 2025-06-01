@@ -30,16 +30,26 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $rules = [
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
             'email'         => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'course'        => ['required', 'string', 'max:255'],
-            'department'    => ['required', 'string', 'max:255'],
             'phone_number'  => ['required', 'string', 'max:20'],
             'password'      => ['required', 'string', 'min:6', 'confirmed'],
             'role'          => ['required', 'string'],
-        ]);
+        ];
+
+        // Department is required for student and hod
+        if (isset($data['role']) && in_array($data['role'], ['student', 'hod'])) {
+            $rules['department'] = ['required', 'string', 'max:255'];
+        }
+
+        // Course is required for student only
+        if (isset($data['role']) && $data['role'] === 'student') {
+            $rules['course'] = ['required', 'string', 'max:255'];
+        }
+
+        return Validator::make($data, $rules);
     }
 
     /**
@@ -54,8 +64,8 @@ class RegisterController extends Controller
             'first_name'    => $data['first_name'],
             'last_name'     => $data['last_name'],
             'email'         => $data['email'],
-            'course'        => $data['course'],
-            'department'    => $data['department'],
+            'course'        => (isset($data['role']) && $data['role'] === 'student') ? $data['course'] : null,
+            'department'    => (isset($data['role']) && in_array($data['role'], ['student', 'hod'])) ? $data['department'] : null,
             'phone_number'  => $data['phone_number'],
             'role'          => $data['role'],
             'password'      => Hash::make($data['password']),
@@ -182,10 +192,14 @@ class RegisterController extends Controller
 
     protected function registered(\Illuminate\Http\Request $request, $user)
     {
-        // Log the user out after registration (if auto-login is enabled)
-        $this->guard()->logout();
+        // If registered by admin, redirect to manage users
+        if ($request->has('registered_by_admin')) {
+            $this->guard()->logout();
+            return redirect()->route('admin.manage.users')->with('success', 'User registered successfully!');
+        }
 
-        // Redirect to login page with a success message
+        // Otherwise, redirect to login (for self-registration)
+        $this->guard()->logout();
         return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
 }

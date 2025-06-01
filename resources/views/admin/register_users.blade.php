@@ -16,6 +16,7 @@
         @endif
         <form method="POST" action="{{ route('register') }}">
             @csrf
+            <input type="hidden" name="registered_by_admin" value="1">
             <div class="mb-3">
                 <label for="first_name" class="form-label">First Name</label>
                 <input type="text" name="first_name" id="first_name" class="form-control" required>
