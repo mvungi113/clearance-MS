@@ -1,6 +1,11 @@
 @extends('layout.student')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'student') {
+        abort(404);
+    }
+@endphp
 
     <div class="mb-4">
         <div class="alert alert-info d-flex align-items-center" role="alert">

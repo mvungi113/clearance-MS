@@ -1,10 +1,12 @@
-{{-- filepath: resources/views/departments/dashboard.blade.php --}}
+{{-- filepath: resources/views/departments/verified_requests.blade.php --}}
 @extends('layout.department')
 
 @section('content')
 
-
 @if(auth()->user())
+    @php
+        $role = auth()->user()->role;
+    @endphp
     <div class="container mt-4">
         <h3 class="mb-4 text-capitalize">{{ $role }} Clearance Requests</h3>
         @if(session('success'))
@@ -69,5 +71,5 @@
             </tbody>
         </table>
     </div>
-
+@endif
 @endsection

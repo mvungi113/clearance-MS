@@ -5,6 +5,9 @@
 
 
 @if(auth()->user())
+    @php
+        $role = auth()->user()->role;
+    @endphp
     <div class="container mt-4">
         <h3 class="mb-4 text-capitalize">{{ $role }} Rejected Clearance Requests</h3>
         @if(session('success'))
@@ -69,5 +72,5 @@
             </tbody>
         </table>
     </div>
-
+@endif
 @endsection

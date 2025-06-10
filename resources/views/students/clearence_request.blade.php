@@ -1,6 +1,11 @@
 @extends('layout.student')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'student') {
+        abort(404);
+    }
+@endphp
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -19,6 +24,11 @@
                         </ul>
                     </div>
                 @endif
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle me-1"></i>{{ session('success') }}
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('student.clearance.request') }}">
                     @csrf
                     <div class="mb-3">
@@ -27,7 +37,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="details" class="form-label">Details <span class="text-muted">(optional)</span></label>
-                        <textarea name="details" id="details" class="form-control" rows="4" placeholder="Provide any relevant details for your clearance request..."></textarea>
+                        <textarea name="details" id="details" class="form-control" rows="4" placeholder="Provide any relevant details for your clearance request...">{{ old('details') }}</textarea>
                     </div>
                     <button type="submit" class="btn btn-success w-100">
                         <i class="bi bi-send me-1"></i> Submit Request
