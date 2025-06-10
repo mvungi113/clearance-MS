@@ -1,9 +1,20 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
 
 <div class="container mt-4">
     <h3>Manage Users</h3>
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-1"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <form method="GET" action="{{ route('admin.manage.users') }}" class="mb-3">
         <div class="row g-2 align-items-end">
             <div class="col-md-4">

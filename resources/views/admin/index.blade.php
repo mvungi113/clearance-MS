@@ -1,6 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
 
     <h2 class="mb-3">Welcome, {{ auth()->user()->first_name ?? 'Admin' }}!</h2>
     <p class="mb-4">This is your admin dashboard. Use the shortcuts below to manage the system.</p>
@@ -36,7 +41,6 @@
                 </div>
             </div>
         </div>
-        <!-- Example: Add more cards as needed -->
         <div class="col-md-6 col-lg-4 mb-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
@@ -44,6 +48,16 @@
                     <h5 class="card-title">Reports</h5>
                     <p class="card-text">View clearance statistics and reports.</p>
                     <a href="#" class="btn btn-warning btn-sm text-white disabled">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle display-4 text-secondary mb-2"></i>
+                    <h5 class="card-title">My Profile</h5>
+                    <p class="card-text">View and update your admin profile.</p>
+                    <a href="{{ route('admin.profile') }}" class="btn btn-secondary btn-sm">View Profile</a>
                 </div>
             </div>
         </div>

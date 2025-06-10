@@ -143,5 +143,8 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
         return view('admin.profile');
     })->name('admin.profile');
 
+// Add this route for admin to register users
+Route::post('/admin/register-user', [RegisterController::class, 'registerByAdmin'])->name('admin.register.user');
+
 Route::redirect('/department', '/department/dashboard');
 Route::post('/department/profile/password', [DepartmentController::class, 'updatePassword'])->name('department.profile.password');

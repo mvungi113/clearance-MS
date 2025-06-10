@@ -1,6 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
+@php
+    if (!auth()->user() || auth()->user()->role !== 'admin') {
+        abort(404);
+    }
+@endphp
 
 <style>
     /* Remove input border glow on focus */
@@ -18,6 +23,7 @@
         border-color: #146c43 !important;
     }
 </style>
+
 <div class="container mt-4">
     <h4>Register New Course or Department</h4>
     @if(session('success'))

@@ -72,7 +72,9 @@ class RegisterController extends Controller
         ]);
     }
 
-    // Show user registration form
+    // ==================== FORM DISPLAY METHODS ====================
+
+    // Show user registration form (for students)
     public function showRegistrationForm()
     {
         $courses = Course::all();
@@ -96,6 +98,37 @@ class RegisterController extends Controller
         return view('admin.register_course', compact('courses', 'departments'));
     }
 
+    // ==================== USER REGISTRATION METHODS ====================
+
+    // Method for admin to register users (keeps admin logged in)
+    public function registerByAdmin(Request $request)
+    {
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Create user without logging them in
+        $user = $this->create($request->all());
+
+        return redirect()->route('admin.manage.users')
+            ->with('success', 'User registered successfully!');
+    }
+
+    // Handle normal student registration
+    protected function registered(\Illuminate\Http\Request $request, $user)
+    {
+        // For normal registration, logout and redirect to login
+        $this->guard()->logout();
+        return redirect()->route('login')
+            ->with('success', 'Registration successful! Please login.');
+    }
+
+    // ==================== COURSE MANAGEMENT METHODS ====================
+
     // Save a new course
     public function saveCourse(Request $request)
     {
@@ -108,20 +141,6 @@ class RegisterController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Course created successfully.');
-    }
-
-    // Save a new department
-    public function saveDepartment(Request $request)
-    {
-        $request->validate([
-            'department_name' => 'required|string|max:255|unique:departments,name',
-        ]);
-
-        Department::create([
-            'name' => $request->department_name,
-        ]);
-
-        return redirect()->back()->with('success', 'Department created successfully.');
     }
 
     // Edit a course
@@ -145,7 +164,6 @@ class RegisterController extends Controller
             'name' => $request->name,
         ]);
 
-        // Redirect to the course management page after update
         return redirect('/admin/register-course')->with('success', 'Course updated successfully.');
     }
 
@@ -156,6 +174,22 @@ class RegisterController extends Controller
         $course->delete();
 
         return redirect()->back()->with('success', 'Course deleted successfully.');
+    }
+
+    // ==================== DEPARTMENT MANAGEMENT METHODS ====================
+
+    // Save a new department
+    public function saveDepartment(Request $request)
+    {
+        $request->validate([
+            'department_name' => 'required|string|max:255|unique:departments,name',
+        ]);
+
+        Department::create([
+            'name' => $request->department_name,
+        ]);
+
+        return redirect()->back()->with('success', 'Department created successfully.');
     }
 
     // Edit a department
@@ -188,18 +222,5 @@ class RegisterController extends Controller
         $department->delete();
 
         return redirect()->back()->with('success', 'Department deleted successfully.');
-    }
-
-    protected function registered(\Illuminate\Http\Request $request, $user)
-    {
-        // If registered by admin, redirect to manage users
-        if ($request->has('registered_by_admin')) {
-            $this->guard()->logout();
-            return redirect()->route('admin.manage.users')->with('success', 'User registered successfully!');
-        }
-
-        // Otherwise, redirect to login (for self-registration)
-        $this->guard()->logout();
-        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
 }
