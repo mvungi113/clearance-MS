@@ -2,9 +2,6 @@
 @extends('layout.department')
 
 @section('content')
-@php
-    $role = auth()->user()->role;
-@endphp
 
 @if(auth()->user())
     <div class="container mt-4">
@@ -84,7 +81,5 @@
             </tbody>
         </table>
     </div>
-@else
-    {{ abort(404) }}
-@endif
+
 @endsection

@@ -1,11 +1,7 @@
 @extends('layout.student')
 
 @section('content')
-@php
-    if (!auth()->user() || auth()->user()->role !== 'student') {
-        abort(404);
-    }
-@endphp
+
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm">

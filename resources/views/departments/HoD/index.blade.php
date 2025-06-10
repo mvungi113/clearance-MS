@@ -1,7 +1,6 @@
 @extends('layout.department')
 
 @section('content')
-@if(auth()->user() && auth()->user()->role === 'hod')
 <div class="container mt-4">
     <h3>HoD Clearance Requests</h3>
     @if(session('success'))
@@ -55,7 +54,5 @@
         </tbody>
     </table>
 </div>
-@else
-    {{ abort(404) }}
-@endif
+
 @endsection

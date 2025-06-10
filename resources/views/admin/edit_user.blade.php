@@ -1,11 +1,7 @@
 @extends('layout.admin')
 
 @section('content')
-@php
-    if (!auth()->user() || auth()->user()->role !== 'admin') {
-        abort(404);
-    }
-@endphp
+
 <div class="container mt-4">
     <h3>Edit User</h3>
     <form method="POST" action="{{ route('admin.users.update', $user->id) }}">

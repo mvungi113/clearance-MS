@@ -2,7 +2,6 @@
 @extends('layout.department')
 
 @section('content')
-@if(auth()->user() && auth()->user()->role === 'library')
 <div class="container mt-4">
     <h3>Library Clearance Requests</h3>
     @if(session('success'))
@@ -54,9 +53,6 @@
         </tbody>
     </table>
 </div>
-@else
-    {{-- If not library, abort with 404 --}}
-    {{ abort(404) }}
-@endif
+
 @endsection
 

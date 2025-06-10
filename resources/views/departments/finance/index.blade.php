@@ -1,7 +1,6 @@
 @extends('layout.department')
 
 @section('content')
-@if(auth()->user() && auth()->user()->role === 'finance')
 <div class="container mt-4">
     <h3>Financial Clearance Requests</h3>
     @if(session('success'))
@@ -53,7 +52,5 @@
         </tbody>
     </table>
 </div>
-@else
-    {{ abort(404) }}
-@endif
+
 @endsection
