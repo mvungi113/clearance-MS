@@ -26,7 +26,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Initiate a payment and create a transaction record.
+     * Initiate a payment and create a transaction record (Pay by Link).
      */
     public function pay(Request $request)
     {
@@ -54,8 +54,8 @@ class PaymentController extends Controller
                 'buyer_name'       => $request->name,
                 'buyer_phone'      => $request->phone,
                 'amount'           => $request->amount,
-                'redirect_url'     => url('/payment/success'), // or route('payment.success')
-                'cancel_url'       => url('/payment/cancel'),  // or route('payment.cancel')
+                'redirect_url'     => url('/payment/success'),
+                'cancel_url'       => url('/payment/cancel'),
                 'webhook'          => config('palm_pesa.callback_url'),
                 'buyer_remarks'    => 'Student Payment',
                 'merchant_remarks' => 'Student Clearance',
@@ -83,12 +83,11 @@ class PaymentController extends Controller
     }
 
     /**
-     * Receive and process Palm Pesa callback.
+     * Receive and process Palm Pesa callback (webhook).
      */
     public function callback(Request $request)
     {
-        // Log the callback for debugging
-        \Log::info('Palm Pesa callback received', $request->all());
+        Log::info('Palm Pesa callback received', $request->all());
 
         // Get the reference or order_id from the callback data
         $reference = $request->input('reference') ?? $request->input('order_id');
@@ -98,7 +97,7 @@ class PaymentController extends Controller
         }
 
         // Find the transaction
-        $transaction = \App\Models\PalmPesaTransaction::where('reference', $reference)->first();
+        $transaction = PalmPesaTransaction::where('reference', $reference)->first();
 
         if (!$transaction) {
             return response()->json(['error' => 'Transaction not found'], 404);
@@ -106,11 +105,61 @@ class PaymentController extends Controller
 
         // Update transaction with callback data
         $transaction->update([
-            'status'             => $request->input('status', 'success'), // or use the actual status field from Palm Pesa
+            'status'             => $request->input('status', 'success'), // Use actual status from Palm Pesa if available
             'transaction_id'     => $request->input('transaction_id') ?? $request->input('transid'),
             'palm_pesa_response' => $request->all(),
         ]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Initiate a payment via mobile and create a transaction record (USSD Push).
+     */
+    public function payViaMobile(Request $request)
+    {
+        $request->validate([
+            'phone'  => 'required|string',
+            'amount' => 'required|numeric|min:200', // Minimum is 200 TSh
+        ], [
+            'amount.min' => 'The minimum payment amount is 200 TSh.',
+        ]);
+
+        $user = auth()->user();
+
+        $transaction_id = 'TXN' . uniqid();
+
+        // Save transaction as pending
+        $transaction = PalmPesaTransaction::create([
+            'reference'   => $transaction_id,
+            'phone'       => $request->phone,
+            'amount'      => $request->amount,
+            'status'      => 'pending',
+            'user_email'  => $user->email ?? null,
+            'first_name'  => $user->first_name ?? null,
+            'last_name'   => $user->last_name ?? null,
+        ]);
+
+        $data = [
+            'name'           => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
+            'email'          => $user->email ?? 'student@example.com',
+            'phone'          => $request->phone,
+            'amount'         => $request->amount,
+            'transaction_id' => $transaction_id,
+            'address'        => 'N/A',
+            'postcode'       => '00000',
+            'buyer_uuid'     => $user->id ?? rand(100000,999999),
+        ];
+
+        $response = $this->palmPesa->payViaMobile($data);
+
+        // Save response
+        $transaction->update(['palm_pesa_response' => $response]);
+
+        if (isset($response['response']['result']) && $response['response']['result'] === 'SUCCESS') {
+            return back()->with('success', $response['message'] ?? 'Payment request sent to user\'s phone.');
+        }
+
+        return back()->with('error', $response['message'] ?? 'Payment initiation failed.');
     }
 }

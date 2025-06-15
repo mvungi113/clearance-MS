@@ -53,7 +53,7 @@ class PalmPesaService
      */
     public function payViaMobile(array $data)
     {
-        $response = Http::withHeaders([
+        $response = \Illuminate\Support\Facades\Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiToken,
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',

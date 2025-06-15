@@ -12,8 +12,11 @@ class PalmPesaTransaction extends Model
         'reference',
         'phone',
         'amount',
-        'transaction_id',
         'status',
+        'user_email',
+        'first_name',
+        'last_name',
+        'transaction_id',
         'palm_pesa_response',
     ];
 

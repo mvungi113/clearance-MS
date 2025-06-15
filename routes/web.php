@@ -54,9 +54,6 @@ Route::get('/student/profile', function () {
     return view('students.profile');
 })->name('student.profile');
 
-Route::get('/student/payment', function () {
-    return view('students.payment');
-})->name('student.payment');
 
 
 // Admin-only routes (no middleware)
@@ -157,11 +154,5 @@ Route::post('/department/profile/password', [DepartmentController::class, 'updat
 Route::get('/palm-pesa/pay', [PaymentController::class, 'showPayForm']);
 Route::post('/palm-pesa/pay', [PaymentController::class, 'pay']);
 Route::post('/palm-pesa/callback', [PaymentController::class, 'callback']);
+Route::post('/palm-pesa/pay-via-mobile', [PaymentController::class, 'payViaMobile']);
 
-Route::get('/payment/success', function () {
-    return view('palm_pesa.success');
-})->name('payment.success');
-
-Route::get('/payment/cancel', function () {
-    return view('palm_pesa.cancel');
-})->name('payment.cancel');

@@ -13,16 +13,16 @@ class CreatePalmPesaTransactionsTable extends Migration
     {
         Schema::create('palm_pesa_transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('reference');
+            $table->uuid('reference')->unique();
             $table->string('phone');
             $table->decimal('amount', 12, 2);
-            $table->string('transaction_id')->nullable();
             $table->string('status')->default('pending');
+            $table->string('user_email')->nullable();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('transaction_id')->nullable();
             $table->json('palm_pesa_response')->nullable();
             $table->timestamps();
-
-            $table->index('reference');
-            $table->index('phone');
         });
     }
 
@@ -33,4 +33,4 @@ class CreatePalmPesaTransactionsTable extends Migration
     {
         Schema::dropIfExists('palm_pesa_transactions');
     }
-}
+};
