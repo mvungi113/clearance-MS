@@ -93,6 +93,11 @@
                         <i class="bi bi-person-circle me-2"></i> Profile
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center" href="{{ url('/palm-pesa/pay') }}">
+                        <i class="bi bi-credit-card me-2"></i> Palm Pesa Payment
+                    </a>
+                </li>
             </ul>
             <hr class="border-light w-75 my-3">
             <!-- Logout link at the bottom, centered with 20px padding from bottom -->
