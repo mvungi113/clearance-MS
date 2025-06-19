@@ -95,7 +95,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white d-flex align-items-center" href="{{ url('/palm-pesa/pay') }}">
-                        <i class="bi bi-credit-card me-2"></i> Palm Pesa Payment
+                        <i class="bi bi-credit-card me-2"></i> Make Payment
                     </a>
                 </li>
             </ul>

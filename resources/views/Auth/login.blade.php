@@ -11,7 +11,7 @@
     <div class="col-md-5">
         <div class="card">
             <div class="card-header text-center">
-                <h4>Student Login</h4>
+                <h4>Login</h4>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('login') }}">
