@@ -40,34 +40,6 @@
                             <th><i class="bi bi-calendar-event me-1"></i> Date Submitted</th>
                             <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
                         </tr>
-                        <tr>
-                            <th><i class="bi bi-chat-left-text me-1"></i> Details</th>
-                            <td>{{ $request->details ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th><i class="bi bi-flag me-1"></i> Status</th>
-                            <td>
-                                @if($allVerified && $request->status !== 'approved')
-                                    <form method="POST" action="{{ route('student.clearance.approve', $request->id) }}" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="bi bi-check-circle"></i> Approve
-                                        </button>
-                                    </form>
-                                @elseif($request->status === 'approved')
-                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Approved</span>
-                                    <a href="{{ route('student.clearance.download', $request->id) }}" class="btn btn-primary btn-sm ms-2" target="_blank">
-                                        <i class="bi bi-download"></i> Download Clearance
-                                    </a>
-                                @elseif($request->status === 'pending')
-                                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
-                                @elseif($request->status === 'rejected')
-                                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Rejected</span>
-                                @else
-                                    <span class="badge bg-secondary">{{ ucfirst($request->status) }}</span>
-                                @endif
-                            </td>
-                        </tr>
                         @php
                             $departments = [
                                 'library' => ['Library', 'bi-book'],
@@ -78,6 +50,13 @@
                                 'estate' => ['Estate', 'bi-building'],
                                 'computer_lab' => ['Computer Lab', 'bi-pc-display'],
                             ];
+                            $allProcessed = true;
+                            foreach($departments as $key => [$label, $icon]) {
+                                if (($request[$key . '_status'] ?? 'pending') === 'pending') {
+                                    $allProcessed = false;
+                                    break;
+                                }
+                            }
                         @endphp
                         @foreach($departments as $key => [$label, $icon])
                         <tr>
@@ -104,6 +83,32 @@
                             </td>
                         </tr>
                         @endforeach
+                   
+                        <tr>
+                            <th><i class="bi bi-flag me-1"></i> Download Clearance</th>
+                            <td>
+                                @php
+                                    $allDone = true;
+                                    foreach($departments as $key => [$label, $icon]) {
+                                        $status = $request[$key . '_status'] ?? 'pending';
+                                        if ($status === 'pending') {
+                                            $allDone = false;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                @if($allDone)
+                                    <a href="{{ route('student.clearance.download', $request->id) }}" class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="bi bi-download"></i> Download Clearance
+                                    </a>
+                                @else
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        <i class="bi bi-download"></i> Download Clearance
+                                    </button>
+                                    <span class="text-muted ms-2">Clearance will be available after all departments process your request.</span>
+                                @endif
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

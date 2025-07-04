@@ -15,6 +15,9 @@
                 <h5 class="mb-0">Submit Clearance Request</h5>
             </div>
             <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    To request clearance, simply click the button below. Your request will be sent to the appropriate department for processing. No additional information is required.
+                </div>
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -31,21 +34,12 @@
                 @endif
                 <form method="POST" action="{{ route('student.clearance.request') }}">
                     @csrf
-                    <div class="mb-3">
-                        <label for="reason" class="form-label">Clearance Reason <span class="text-danger">*</span></label>
-                        <textarea name="reason" id="reason" class="form-control" rows="3" required placeholder="Enter the reason for clearance">{{ old('reason') }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="details" class="form-label">Details <span class="text-muted">(optional)</span></label>
-                        <textarea name="details" id="details" class="form-control" rows="4" placeholder="Provide any relevant details for your clearance request...">{{ old('details') }}</textarea>
-                    </div>
                     <button type="submit" class="btn btn-success w-100">
-                        <i class="bi bi-send me-1"></i> Submit Request
+                        <i class="bi bi-send me-1"></i> Request Clearance
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 @endsection
