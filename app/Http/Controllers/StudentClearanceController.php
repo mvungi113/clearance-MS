@@ -11,6 +11,11 @@ class StudentClearanceController extends Controller
 {
     public function submitRequest(Request $request)
     {
+        // Prevent duplicate requests
+        if (ClearanceRequest::where('student_id', Auth::id())->exists()) {
+            return back()->with('error', 'You have already submitted a clearance request.');
+        }
+
         // No need to validate department from the form since it's taken from the logged-in user
         ClearanceRequest::create([
             'student_id'      => Auth::id(),

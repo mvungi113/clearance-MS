@@ -32,12 +32,20 @@
                         <i class="bi bi-check-circle me-1"></i>{{ session('success') }}
                     </div>
                 @endif
-                <form method="POST" action="{{ route('student.clearance.request') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-success w-100">
-                        <i class="bi bi-send me-1"></i> Request Clearance
-                    </button>
-                </form>
+
+                @if(isset($hasRequest) && $hasRequest)
+                    <div class="alert alert-warning">
+                        You have already submitted a clearance request. Please wait for it to be processed.
+                    </div>
+                @else
+                    <form method="POST" action="{{ route('student.clearance.request') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-send me-1"></i> Request Clearance
+                        </button>
+                    </form>
+                @endif
+
             </div>
         </div>
     </div>
