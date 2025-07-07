@@ -32,7 +32,6 @@
                     @elseif($role === 'hod')
                         <th>HoD Status</th>
                     @endif
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,9 +56,7 @@
                             <td>
                                 <span class="badge bg-success">Verified</span>
                             </td>
-                            <td>
-                                <span class="text-muted">No action</span>
-                            </td>
+                           
                         </tr>
                     @endif
                 @endforeach

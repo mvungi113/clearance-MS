@@ -31,12 +31,17 @@ class HodClearanceController extends Controller
     }
 
     // Reject HoD section
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->hod_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'HoD section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->hod_status = 'rejected';
+        $clearance->hod_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'HoD section rejected with reason.');
     }
 }

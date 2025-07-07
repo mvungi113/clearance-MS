@@ -156,3 +156,4 @@ Route::post('/palm-pesa/pay', [PaymentController::class, 'pay']);
 Route::post('/palm-pesa/callback', [PaymentController::class, 'callback']);
 Route::post('/palm-pesa/pay-via-mobile', [PaymentController::class, 'payViaMobile']);
 
+Route::post('/student/clearance/{id}/repost/{department}', [StudentClearanceController::class, 'repost'])->name('student.clearance.repost');

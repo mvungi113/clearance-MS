@@ -22,12 +22,17 @@ class HostelClearanceController extends Controller
         return back()->with('success', 'Hostel section approved.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->hostel_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'Hostel section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->hostel_status = 'rejected';
+        $clearance->hostel_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'Hostel section rejected with reason.');
     }
 }

@@ -48,12 +48,26 @@
                                 'hod' => $request->hod_status,
                                 default => null
                             };
+                            $remarks = match($role) {
+                                'library' => $request->library_remarks,
+                                'hostel' => $request->hostel_remarks,
+                                'sports' => $request->sports_remarks,
+                                'computer_lab' => $request->computer_lab_remarks,
+                                'estate' => $request->estate_remarks,
+                                'finance' => $request->financial_remarks,
+                                'hod' => $request->hod_remarks,
+                                default => null
+                            };
                         @endphp
                         <td>
                             @if($status === 'verified')
                                 <span class="badge bg-success">Verified</span>
                             @elseif($status === 'rejected')
                                 <span class="badge bg-danger">Rejected</span>
+                                @if($remarks)
+                                    <br>
+                                    <small class="text-danger">Reason: {{ $remarks }}</small>
+                                @endif
                             @else
                                 <span class="badge bg-warning text-dark">Pending</span>
                             @endif
@@ -64,10 +78,18 @@
                                     @csrf
                                     <button type="submit" class="btn btn-success btn-sm">Approve</button>
                                 </form>
-                                <form method="POST" action="{{ route($role . '.reject', $request->id) }}" style="display:inline;">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="showReasonInput({{ $request->id }})" id="reject-btn-{{ $request->id }}">Reject</button>
+                                <form method="POST" action="{{ route($role . '.reject', $request->id) }}" style="display:inline; display:none;" id="reason-form-{{ $request->id }}">
                                     @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    <input type="text" name="reason" placeholder="Reason" required class="form-control d-inline-block w-auto" style="width: 120px; margin-right: 5px;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Submit Reason</button>
                                 </form>
+                                <script>
+                                    function showReasonInput(id) {
+                                        document.getElementById('reject-btn-' + id).style.display = 'none';
+                                        document.getElementById('reason-form-' + id).style.display = 'inline';
+                                    }
+                                </script>
                             @else
                                 <span class="text-muted">No action</span>
                             @endif
@@ -81,5 +103,6 @@
             </tbody>
         </table>
     </div>
+@endif
 
 @endsection

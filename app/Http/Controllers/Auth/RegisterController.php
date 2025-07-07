@@ -10,7 +10,6 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-
 class RegisterController extends Controller
 {
     use RegistersUsers;
@@ -31,15 +30,15 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         $rules = [
-            'first_name'    => ['required', 'string', 'max:255'],
-            'last_name'     => ['required', 'string', 'max:255'],
+            'first_name'    => ['required', 'string', 'min:2', 'max:50', 'regex:/^[A-Za-z\s\-]+$/'],
+            'last_name'     => ['required', 'string', 'min:2', 'max:50', 'regex:/^[A-Za-z\s\-]+$/'],
             'email'         => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'phone_number'  => ['required', 'string', 'max:20'],
-            'password'      => ['required', 'string', 'min:6', 'confirmed'],
+            'phone_number'  => ['required', 'digits:10', 'unique:users,phone_number'],
+            'password'      => ['required', 'string', 'min:8', 'confirmed'],
             'role'          => ['required', 'string'],
         ];
 
-        // Department is required for student and hod
+        // Department is required for student and hod (leave as it was)
         if (isset($data['role']) && in_array($data['role'], ['student', 'hod'])) {
             $rules['department'] = ['required', 'string', 'max:255'];
         }
@@ -49,7 +48,14 @@ class RegisterController extends Controller
             $rules['course'] = ['required', 'string', 'max:255'];
         }
 
-        return Validator::make($data, $rules);
+        return \Validator::make($data, $rules, [
+            'first_name.regex' => 'First name may only contain letters, spaces, and hyphens.',
+            'last_name.regex' => 'Last name may only contain letters, spaces, and hyphens.',
+            'phone_number.digits' => 'Phone number must be exactly 10 digits.',
+            'phone_number.unique' => 'This phone number is already registered.',
+            'email.unique' => 'This email is already registered.',
+            'password.min' => 'Password must be at least 8 characters.',
+        ]);
     }
 
     /**

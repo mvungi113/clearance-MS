@@ -16,13 +16,18 @@ class LibraryClearanceController extends Controller
         return back()->with('success', 'Library section approved.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->library_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'Library section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->library_status = 'rejected';
+        $clearance->library_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'Library section rejected with reason.');
     }
 
     public function dashboard()

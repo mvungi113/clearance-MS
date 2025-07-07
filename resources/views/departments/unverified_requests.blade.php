@@ -33,7 +33,7 @@
                     @elseif($role === 'hod')
                         <th>HoD Status</th>
                     @endif
-                    <th>Action</th>
+                    <th>Rejection Reason</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,15 +58,32 @@
                             <td>
                                 <span class="badge bg-danger">Rejected</span>
                             </td>
+                           
                             <td>
-                                <span class="text-muted">No action</span>
+                                @php
+                                    $remarks = match($role) {
+                                        'library' => $request->library_remarks,
+                                        'hostel' => $request->hostel_remarks,
+                                        'sports' => $request->sports_remarks,
+                                        'computer_lab' => $request->computer_lab_remarks,
+                                        'estate' => $request->estate_remarks,
+                                        'finance' => $request->financial_remarks,
+                                        'hod' => $request->hod_remarks,
+                                        default => null
+                                    };
+                                @endphp
+                                @if($remarks)
+                                    <small class="text-danger">Reason: {{ $remarks }}</small>
+                                @else
+                                    <span class="text-muted">No reason provided</span>
+                                @endif
                             </td>
                         </tr>
                     @endif
                 @endforeach
                 @if($i === 1)
                     <tr>
-                        <td colspan="4">No rejected clearance requests found.</td>
+                        <td colspan="5">No rejected clearance requests found.</td>
                     </tr>
                 @endif
             </tbody>

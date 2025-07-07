@@ -22,12 +22,17 @@ class SportsClearanceController extends Controller
         return back()->with('success', 'Sports section approved.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->sports_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'Sports section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->sports_status = 'rejected';
+        $clearance->sports_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'Sports section rejected with reason.');
     }
 }

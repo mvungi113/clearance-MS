@@ -35,11 +35,15 @@
             @endphp
             <div class="table-responsive">
                 <table class="table table-bordered table-striped w-100 w-md-75 mx-auto align-middle">
-                    <tbody>
+                    <thead>
                         <tr>
-                            <th><i class="bi bi-calendar-event me-1"></i> Date Submitted</th>
-                            <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Reason</th>
+                            <th>Repost</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @php
                             $departments = [
                                 'library' => ['Library', 'bi-book'],
@@ -81,6 +85,25 @@
                                     {{ ucfirst($request[$key . '_status'] ?? 'pending') }}
                                 </span>
                             </td>
+                            <td>
+                                @if($request[$key . '_status'] === 'rejected' && !empty($request[$key . '_remarks']))
+                                    <small class="text-danger">{{ $request[$key . '_remarks'] }}</small>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($request[$key . '_status'] === 'rejected' && $request->student_id === auth()->id())
+                                    <form method="POST" action="{{ route('student.clearance.repost', [$request->id, $key]) }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-arrow-repeat"></i> Repost
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                    
@@ -105,7 +128,7 @@
                                     <button class="btn btn-secondary btn-sm" disabled>
                                         <i class="bi bi-download"></i> Download Clearance
                                     </button>
-                                    <span class="text-muted ms-2">Clearance will be available after all departments process your request.</span>
+                                    {{-- <span class="text-muted ms-2">Clearance will be available after all departments process your request.</span> --}}
                                 @endif
                             </td>
                         </tr>

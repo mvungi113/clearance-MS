@@ -22,12 +22,17 @@ class FinancialClearanceController extends Controller
         return back()->with('success', 'Financial section approved.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->financial_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'Financial section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->financial_status = 'rejected';
+        $clearance->financial_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'Financial section rejected with reason.');
     }
 }

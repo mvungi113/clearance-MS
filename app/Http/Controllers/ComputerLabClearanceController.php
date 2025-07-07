@@ -22,12 +22,17 @@ class ComputerLabClearanceController extends Controller
         return back()->with('success', 'Computer Lab section approved.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->computer_lab_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'Computer Lab section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->computer_lab_status = 'rejected';
+        $clearance->computer_lab_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'Computer Lab section rejected with reason.');
     }
 }

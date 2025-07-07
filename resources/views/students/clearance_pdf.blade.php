@@ -37,11 +37,11 @@
                         <span class="approved">Approved</span>
                     @elseif($status === 'rejected')
                         <span class="rejected">Rejected</span>
+                        @php $reason = $request[$key . '_remarks'] ?? null; @endphp
                         <br>
                         <small>
                             <em>
-                                Your clearance request was not approved by the {{ $label }} department.
-                                Please visit the {{ $label }} office for further assistance regarding your clearance.
+                                {{ $reason ? 'Reason: ' . $reason : 'No reason provided.' }}
                             </em>
                         </small>
                     @else

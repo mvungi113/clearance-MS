@@ -16,20 +16,27 @@ class StudentClearanceController extends Controller
             return back()->with('error', 'You have already submitted a clearance request.');
         }
 
-        // No need to validate department from the form since it's taken from the logged-in user
         ClearanceRequest::create([
             'student_id'      => Auth::id(),
             'student_name'    => Auth::user()->first_name . ' ' . Auth::user()->last_name,
-            'department'      => Auth::user()->department, // Use the student's registered department
+            'department'      => Auth::user()->department,
+            'course'          => Auth::user()->course ?? null,
             'status'          => 'pending',
             'remarks'         => null,
             'library_status'      => null,
+            'library_remarks'     => null,
             'hostel_status'       => null,
+            'hostel_remarks'      => null,
             'financial_status'    => null,
+            'financial_remarks'   => null,
             'sports_status'       => null,
+            'sports_remarks'      => null,
             'hod_status'          => null,
+            'hod_remarks'         => null,
             'estate_status'       => null,
+            'estate_remarks'      => null,
             'computer_lab_status' => null,
+            'computer_lab_remarks'=> null,
         ]);
 
         return back()->with('success', 'Clearance request submitted!');
@@ -66,5 +73,22 @@ class StudentClearanceController extends Controller
         ]);
 
         return $pdf->download('clearance_certificate.pdf');
+    }
+
+    public function repost($id, $department)
+    {
+        $clearance = \App\Models\ClearanceRequest::findOrFail($id);
+
+        // Only allow the owner to repost
+        if ($clearance->student_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Only reset the rejected department
+        $clearance[$department . '_status'] = null;
+        $clearance[$department . '_remarks'] = null;
+        $clearance->save();
+
+        return back()->with('success', ucfirst($department) . ' clearance reposted for review.');
     }
 }

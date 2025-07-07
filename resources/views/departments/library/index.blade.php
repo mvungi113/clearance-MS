@@ -26,6 +26,10 @@
                             <span class="badge bg-success">Verified</span>
                         @elseif($request->library_status === 'rejected')
                             <span class="badge bg-danger">Rejected</span>
+                            @if($request->library_remarks)
+                                <br>
+                                <small class="text-danger">Reason: {{ $request->library_remarks }}</small>
+                            @endif
                         @else
                             <span class="badge bg-warning text-dark">Pending</span>
                         @endif
@@ -36,10 +40,18 @@
                                 @csrf
                                 <button type="submit" class="btn btn-success btn-sm">Approve Library</button>
                             </form>
-                            <form method="POST" action="{{ route('library.reject', $request->id) }}" style="display:inline;">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="showReasonInput({{ $request->id }})" id="reject-btn-{{ $request->id }}">Reject Library</button>
+                            <form method="POST" action="{{ route('library.reject', $request->id) }}" style="display:inline; display:none;" id="reason-form-{{ $request->id }}">
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-sm">Reject Library</button>
+                                <input type="text" name="reason" placeholder="Reason" required class="form-control d-inline-block w-auto" style="width: 120px; margin-right: 5px;">
+                                <button type="submit" class="btn btn-danger btn-sm">Submit Reason</button>
                             </form>
+                            <script>
+                                function showReasonInput(id) {
+                                    document.getElementById('reject-btn-' + id).style.display = 'none';
+                                    document.getElementById('reason-form-' + id).style.display = 'inline';
+                                }
+                            </script>
                         @else
                             <span class="text-muted">No action</span>
                         @endif
@@ -53,6 +65,4 @@
         </tbody>
     </table>
 </div>
-
 @endsection
-

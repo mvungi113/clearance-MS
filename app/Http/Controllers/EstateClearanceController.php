@@ -25,12 +25,17 @@ class EstateClearanceController extends Controller
     }
 
     // Reject estate section
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = ClearanceRequest::findOrFail($id);
-        $request->estate_status = 'rejected';
-        $request->save();
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
 
-        return back()->with('success', 'Estate section rejected.');
+        $clearance = ClearanceRequest::findOrFail($id);
+        $clearance->estate_status = 'rejected';
+        $clearance->estate_remarks = $request->reason;
+        $clearance->save();
+
+        return back()->with('success', 'Estate section rejected with reason.');
     }
 }
